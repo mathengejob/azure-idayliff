@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Azzure Idayliff</title>
+    <style>
+      #main-tile {
+  background-color: #f0f0f0;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+#hub-tile {
+  background-color: #e0e0e0;
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 20px;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+}
+
+#device-tile {
+  background-color: #d0d0d0;
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 10px;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+}
+
+#body-tile {
+  background-color: #c0c0c0;
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 10px;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+}
+
+#body-tile-split {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+#object-tile {
+  background-color: #b0b0b0;
+  padding: 10px;
+  border-radius: 5px;
+  margin: 5px;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+}
+
+.tile {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+
+#hub-tile,
+#device-tile,
+#body-tile{
+  width: 100%;
+}
+
+#hub-tile h2,
+#device-tile h3,
+#body-tile h4 {
+  margin: 0px;
+}
+
+#hub-tile p,
+#device-tile p,
+#body-tile p {
+  margin: 0px;
+  font-size: 12px;
+  color: #666;
+}
+
+#body-tile-split {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  width : 100%;
+
+}
+
+#object-tile {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin: 5px;
+  padding: 5%;
+}
+    </style>
+  </head>
+  <body>
+    <div id="main-tile">
+      <h1>Site 1</h1>
+      <div id="hub-tile" class="tile">
+        <h2>Hub Name:${latestDocument.hub_name}</h2>
+        <p></p>
+
+        <div id="device-tile" class="tile">
+          <h3>Device Name</h3>
+          <p>${latestDocument.device_name}</p>
+       
+          <div id="body-tile" class="tile">
+          <h4>Body</h4>
+          <div id="body-tile-split" class="tile">
+          </div>  
+        
+        </div>
+      </div> 
+    </div>
+    </div>
+  </body>
+  <script>
+    var latestDocument = `${latestDocument.body}`;
+
+    latestDocument = latestDocument.replace("[", "");
+    latestDocument = latestDocument.replace("]", "");
+    // string to array split by comma
+    latestDocument = latestDocument.split(",");
+    for (var i = 0; i < latestDocument.length; i++) {
+      latestDocument[i] = JSON.parse(latestDocument[i]);
+    }
+    //console print all the key in latestDocument
+    //console print all the values in latestDocument
+    for (var i = 0; i < latestDocument.length; i++) {
+      console.log(latestDocument[i]);
+      console.log(typeof(latestDocument[i]));
+    }
+  //print the key in latestDocument
+  //print all value pair keyarray in latestDocument
+  for (var i = 0; i < latestDocument.length; i++) {
+    var key = Object.keys(latestDocument[i]);
+    var value = Object.values(latestDocument[i]);
+
+    console.log(key + " : " + value);
+    //create a div with key as h4 and value as p
+    var objectTile = document.createElement("div");
+    objectTile.id = "object-tile";
+    var objectTileKey = document.createElement("h4");
+    objectTileKey.innerHTML = key;
+    var objectTileValue = document.createElement("p");
+    objectTileValue.innerHTML = value;
+    objectTile.appendChild(objectTileKey);
+    objectTile.appendChild(objectTileValue);
+    document.getElementById("body-tile-split").appendChild(objectTile);
+
+  }
+
+
+    
+    
+
+
+
+
+
+    
+
+
+
+
+  </script>
+</html>
