@@ -1,57 +1,40 @@
 const { Client } = require('pg');
 
-
 module.exports = async function (context, IoTHubMessages) {
-    const table = process.env.db_table;
-    const config = {
+  const table = process.env.db_table;
+  const config = {
     host: process.env.db_hostname,
-    user: process.env.db_username,     
+    user: process.env.db_username,
     password: process.env.db_password,
     database: process.env.db_name,
     port: 5432,
     ssl: true
-};
+  };
 
-const client = new Client(config);
+  const client = new Client(config);
+
   try {
     await client.connect();
 
-    if (IoTHubMessages && IoTHubMessages.length > 0) {
-      const message = IoTHubMessages[0];
+    const payload = JSON.parse(IoTHubMessages);
+    context.log(`Payload: ${JSON.stringify(payload)}`);
 
-      if (message && typeof message === 'string') {
-        try {
-          const parsedMessage = JSON.parse(message);
-          const body = parsedMessage.body;
+    const values = [
+      payload[0].data,
+      payload[1].data,
+      payload[2].data,
+      payload[3].data
+    ];
 
-          if (body && Array.isArray(body)) {
-            const bodyContents = body.map(item => item.data);
-            context.log(`Body contents: ${JSON.stringify(bodyContents)}`);
+    const query = `INSERT INTO ${table} (di_, ai_, do_, ao_, time_, id_) VALUES ($1, $2, $3, $4, DEFAULT, DEFAULT)`;
 
-            // Perform database operations here, e.g., insert data into the 'site1' table
-            const query = `INSERT INTO ${table} (di_, ai_, do_, ao_) VALUES ($1, $2, $3, $4)`;
-            const values = bodyContents.slice(0, 4); // Assuming there are 4 columns (di_, ai_, do_, ao_)
-
-            await client.query(query, values);
-            context.log("Data inserted into the database successfully.");
-          } else {
-            context.log("Invalid payload structure. 'body' field is not an array.");
-          }
-        } catch (error) {
-          context.log("Failed to parse message as JSON:", error);
-        }
-      } else {
-        context.log("Invalid payload structure. Message is not a string.");
-      }
-    } else {
-      context.log("No IoT Hub messages received.");
-    }
+    await client.query(query, values);
+    context.log("Data inserted into the database successfully.");
   } catch (error) {
-    context.log(`Error connecting to the database: ${error}`);
+    context.log(`Error inserting data into the database: ${error}`);
   } finally {
     await client.end();
   }
 
   context.log("Finished running");
-  context.done();
 };
